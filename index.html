@@ -290,23 +290,26 @@
     .timeline-section { page-break-after: avoid; }
     .zoom-timeline-section { page-break-before: always; }
 
-    /* APA 7 student title page — portrait, double-spaced, 1-inch margins */
+    /* APA 7 student title page — its own landscape page, content vertically
+       centred so it reads as an intentional title page (single orientation
+       keeps the whole PDF reliable across every browser, incl. Safari). */
     .title-page {
-      page: titlepage;
       page-break-after: always;
+      height: 17cm;                 /* ~printable height of landscape Letter at 1.2cm margins */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       font-family: var(--serif);
       color: black;
       text-align: center;
-      font-size: 12pt;
+      font-size: 13pt;
       line-height: 2;
     }
-    .title-page .tp-spacer { height: 5cm; }
-    .title-page .tp-title { font-size: 12pt; font-weight: 700; margin: 0; }
-    .title-page .tp-block { margin-top: 2em; }
+    .title-page .tp-spacer { display: none; }
+    .title-page .tp-title { font-size: 15pt; font-weight: 700; margin: 0 0 1.5em; }
     .title-page .tp-block p { margin: 0; }
 
     @page { size: landscape; margin: 1.2cm; }
-    @page titlepage { size: portrait; margin: 2.54cm; }
   }
 </style>
 </head>
