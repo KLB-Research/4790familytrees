@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Family Lifelines — PSYC 4790H</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f1e6;
+    --panel: #fdfaf2;
+    --ink: #2a2520;
+    --muted: #6e645a;
+    --line: #d6c9b4;
+    --accent: #7a3b2e;
+    --accent-soft: rgba(122, 59, 46, 0.08);
+    --lifeline: #4a5568;
+    --you: #7a3b2e;
+    --serif: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.75rem 4rem; }
+  header { margin-bottom: 2rem; }
+  h1 {
+    font-family: var(--serif);
+    font-size: 2.4rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--muted); margin: 0; font-size: 1.05rem; font-style: italic; }
+  h2 {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.4rem;
+  }
+  .section-blurb {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+    font-style: italic;
+    max-width: 720px;
+  }
+  section { margin-bottom: 2.25rem; }
+  .intro-text p { margin: 0 0 0.85rem; max-width: 720px; }
+  .privacy {
+    background: var(--panel);
+    border-left: 3px solid var(--accent);
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-top: 1rem;
+  }
+  .privacy strong { color: var(--ink); }
+  .you-section, .family-section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 200px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  input[type="text"], input[type="number"] {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    padding: 0.45rem 0.6rem;
+    margin-top: 0.2rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: white;
+    color: var(--ink);
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  input:focus { outline: none; border-color: var(--accent); }
+  .wartime-field { margin-top: 0.5rem; }
+  .wartime-field label { flex: 1 1 100%; }
+  .examples {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0.35rem 0 0;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .examples strong { color: var(--accent); font-style: normal; }
+  .person-card {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .person-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .person-num {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .remove-person {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: var(--sans);
+  }
+  .remove-person:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  button.btn-add, .actions button, .actions .btn-load {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    padding: 0.55rem 1.1rem;
+    background: var(--ink);
+    color: var(--panel);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button.btn-add { margin-top: 0.5rem; background: var(--accent); }
+  button.btn-add:hover, .actions button:hover, .actions .btn-load:hover {
+    background: #1a1612;
+  }
+  button.btn-add:hover { background: #5a2c22; }
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    align-items: center;
+  }
+  .actions-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.6rem;
+    flex-basis: 100%;
+    max-width: 720px;
+  }
+  .btn-load {
+    display: inline-block;
+    text-align: center;
+  }
+  .timeline-container {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  .timeline-container svg { display: block; width: 100%; height: auto; min-width: 900px; }
+  .empty-state {
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  .reference-panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .reference-panel h3 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    margin: 0 0 1rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .wartime-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.95rem;
+  }
+  .wartime-list li { margin-bottom: 0.5rem; }
+  .wartime-list strong { color: var(--accent); }
+  .wartime-list em { color: var(--muted); font-style: italic; }
+  .checkpoint {
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .checkpoint:last-child { border-bottom: none; }
+  .checkpoint-title {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .checkpoint-title .year { font-variant-numeric: tabular-nums; }
+  .checkpoint ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--ink);
+    font-size: 0.95rem;
+  }
+  .checkpoint ul li { margin-bottom: 0.2rem; }
+  .checkpoint .person-name { font-weight: 500; }
+  .checkpoint .age-loc { color: var(--muted); }
+
+  .print-only { display: none; }
+
+  @media print {
+    body { background: white; color: black; }
+    header, .intro-text, .you-section, .family-section, .actions, .print-hide { display: none !important; }
+    .print-only { display: block; }
+    .container { padding: 0; max-width: none; }
+    .timeline-section h2, .reference-panel h3 { border: none; }
+    .timeline-container { border: none; padding: 0; background: white; }
+    .reference-panel { border: none; background: white; padding: 0.5rem 0 0; margin-top: 1rem; page-break-inside: avoid; }
+    .timeline-section { page-break-after: avoid; }
+    .zoom-timeline-section { page-break-before: always; }
+    .print-header {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #888;
+    }
+    @page { size: landscape; margin: 1.2cm; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header class="print-hide">
+    <h1>Family Lifelines</h1>
+    <p class="subtitle">A Holocaust-era timeline of the people in your family.</p>
+  </header>
+
+  <div class="print-only print-header" id="print-header">Family Lifelines</div>
+
+  <section class="intro-text print-hide">
+    <p>The question this exercise asks is not <em>who were your grandparents</em>, but <strong>who in your family was alive between 1900 and 1950</strong>. For most of you that probably means great-grandparents and great-great-grandparents — though it could also include great-aunts, great-uncles, or anyone else you can identify from those generations.</p>
+    <p>Add an entry for each person you can identify. The only thing you really need is a birth year — everything else (where they came from, what they were doing during the war) is what you find out by asking your family or doing some research. Enter what you know; leave the rest blank. As you type, your timeline below builds itself.</p>
+    <p>You may find you can fill in many people, or only a few, or none at all. Some families have careful records; many do not. Displacement, migration, adoption, war, and the simple passing of time all break the chain of what gets remembered. What you don't know is part of the exercise too — "we don't know" is a real answer.</p>
+    <p class="privacy"><strong>Privacy:</strong> Nothing you enter ever leaves your computer. This page has no account and no server, and it sends no data anywhere — not to your instructor, not to the website it's hosted on, not to any AI. Your entries save <strong>automatically in this browser, on this device</strong>, so you can close the tab and pick up where you left off. Because that automatic save lives only in this one browser, use <em>Save my entries</em> to download a backup file — your safeguard if you switch computers or clear your browsing data.</p>
+  </section>
+
+  <section class="you-section print-hide">
+    <h2>You</h2>
+    <div class="form-row">
+      <label>Your name (optional)
+        <input id="you-name" type="text" placeholder="e.g., Emma">
+      </label>
+      <label>Your birth year
+        <input id="you-birthyear" type="number" min="1990" max="2020">
+      </label>
+    </div>
+  </section>
+
+  <section class="family-section print-hide">
+    <h2>Your family</h2>
+    <div id="people-list"></div>
+    <button id="add-person" class="btn-add">+ Add a person</button>
+  </section>
+
+  <section class="timeline-section">
+    <h2 class="print-hide">In perspective</h2>
+    <p class="section-blurb print-hide">The full sweep — where your family sits in time relative to the Holocaust and to you.</p>
+    <div id="timeline-container" class="timeline-container">
+      <div class="empty-state">Add a person above to see your timeline.</div>
+    </div>
+  </section>
+
+  <section class="zoom-timeline-section">
+    <h2 class="print-hide">Through the Holocaust era (1933–1945)</h2>
+    <p class="section-blurb print-hide">A closer look at the war years, with everyone's age shown at each event.</p>
+    <div id="zoom-timeline-container" class="timeline-container">
+      <div class="empty-state">Add someone who was alive during the war to see this view.</div>
+    </div>
+  </section>
+
+  <section id="wartime-section"></section>
+  <section id="by-event-section"></section>
+
+  <section class="actions print-hide">
+    <button id="download-png">Download as images (PNG)</button>
+    <button id="print-btn">Print / Save as PDF</button>
+    <button id="save-data">Save my entries</button>
+    <label class="btn-load">Load saved entries
+      <input id="load-data" type="file" accept=".json" style="display:none">
+    </label>
+    <p class="actions-note"><strong>Save my entries</strong> downloads a small file to your computer that you can reload later. It's a backup, not an account — keep the file somewhere you'll find it. To hand in your work, use <strong>Download as images</strong> (you'll get both timelines) or <strong>Print / Save as PDF</strong>.</p>
+  </section>
+</div>
+
+<script>
+"use strict";
+
+// Three key years for the visual age badges on the wide view
+const KEY_YEARS = [1933, 1939, 1945];
+
+// Backdrop events on the timeline. Israel founded intentionally omitted.
+const EVENTS = [
+  {year: 1914, label: 'WWI begins'},
+  {year: 1918, label: 'WWI ends'},
+  {year: 1929, label: 'Great Depression'},
+  {year: 1933, label: 'Hitler becomes Chancellor', key: true},
+  {year: 1935, label: 'Nuremberg Laws'},
+  {year: 1936, label: 'Berlin Olympics'},
+  {year: 1938, label: 'Kristallnacht'},
+  {year: 1939, label: 'WWII begins', key: true},
+  {year: 1941, label: 'Mass killings intensify'},
+  {year: 1943, label: '80% of Jewish victims killed'},
+  {year: 1944, label: 'D-Day'},
+  {year: 1945, label: 'WWII ends', key: true},
+  {year: 1962, label: 'Eichmann executed'}
+];
+
+// The wide view shows only milestone events to avoid overlap.
+const WIDE_VIEW_YEARS = new Set([1914, 1918, 1929, 1933, 1939, 1945, 1962]);
+
+let people = [];
+let nextId = 1;
+
+function escapeXml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[<>&'"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]));
+}
+
+function addPerson(initial) {
+  const id = nextId++;
+  const p = {
+    id, name: '', relationship: '',
+    birthYear: '', deathYear: '', birthplace: '', wartime: '',
+    ...(initial || {})
+  };
+  people.push(p);
+  renderAll();
+}
+
+function removePerson(id) {
+  people = people.filter(p => p.id !== id);
+  renderAll();
+}
+
+function updatePerson(id, field, value) {
+  const p = people.find(p => p.id === id);
+  if (!p) return;
+  p[field] = value;
+  renderTimeline();
+  renderZoomTimeline();
+  renderWartimePanel();
+  renderByEventPanel();
+  persist();
+}
+
+function renderAll() {
+  renderForm();
+  renderTimeline();
+  renderZoomTimeline();
+  renderWartimePanel();
+  renderByEventPanel();
+  persist();
+}
+
+function renderForm() {
+  const list = document.getElementById('people-list');
+  list.innerHTML = '';
+  people.forEach((p, idx) => {
+    const card = document.createElement('div');
+    card.className = 'person-card';
+    card.dataset.id = p.id;
+    card.innerHTML = `
+      <div class="person-header">
+        <span class="person-num">Person ${idx + 1}</span>
+        <button class="remove-person" data-id="${p.id}">Remove</button>
+      </div>
+      <div class="form-row">
+        <label>Name (optional)
+          <input type="text" data-field="name" placeholder="e.g., John Smith" value="${escapeXml(p.name)}">
+        </label>
+        <label>Relationship to you
+          <input type="text" data-field="relationship" placeholder="e.g., paternal great-grandmother" value="${escapeXml(p.relationship)}">
+        </label>
+      </div>
+      <div class="form-row">
+        <label>Birth year
+          <input type="number" data-field="birthYear" min="1840" max="1990" placeholder="e.g., 1898" value="${escapeXml(p.birthYear)}">
+        </label>
+        <label>Death year (if known)
+          <input type="number" data-field="deathYear" min="1860" max="2026" placeholder="leave blank if living" value="${escapeXml(p.deathYear)}">
+        </label>
+        <label>Birthplace (where they came from)
+          <input type="text" data-field="birthplace" placeholder="e.g., Toronto, Canada" value="${escapeXml(p.birthplace)}">
+        </label>
+      </div>
+      <div class="wartime-field">
+        <label>During the war (1939–1945), what was their situation?
+          <input type="text" data-field="wartime" placeholder="One sentence — see examples below" value="${escapeXml(p.wartime)}">
+        </label>
+        <p class="examples">
+          <strong>Examples:</strong>
+          &ldquo;Lived in Toronto, civilian.&rdquo;
+          &middot; &ldquo;Served in the Canadian army, posted to England 1941&ndash;45.&rdquo;
+          &middot; &ldquo;Family of farmers in rural Punjab, British India.&rdquo;
+          &middot; &ldquo;In hiding in occupied Netherlands.&rdquo;
+          &middot; &ldquo;Refugee from Berlin, eventually reached Shanghai.&rdquo;
+          &middot; &ldquo;Don&rsquo;t know &mdash; family didn&rsquo;t talk about it.&rdquo;
+        </p>
+      </div>
+    `;
+    list.appendChild(card);
+
+    card.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', e => {
+        updatePerson(p.id, e.target.dataset.field, e.target.value);
+      });
+    });
+    card.querySelector('.remove-person').addEventListener('click', () => removePerson(p.id));
+  });
+}
+
+function getYouInfo() {
+  const yb = document.getElementById('you-birthyear').value;
+  const youBirth = yb ? parseInt(yb) : null;
+  const youName = document.getElementById('you-name').value || 'You';
+  return {youBirth, youName};
+}
+
+// ---- Wide "in perspective" timeline ----
+
+function renderTimeline() {
+  const container = document.getElementById('timeline-container');
+  const {youBirth, youName} = getYouInfo();
+  const validPeople = people.filter(p => p.birthYear && !isNaN(parseInt(p.birthYear)));
+
+  const phName = document.getElementById('you-name').value;
+  document.getElementById('print-header').textContent =
+    phName ? `Family Lifelines — ${phName}` : 'Family Lifelines';
+
+  if (validPeople.length === 0 && !youBirth) {
+    container.innerHTML = '<div class="empty-state">Add a person above to see your timeline.</div>';
+    return;
+  }
+
+  const allBirths = validPeople.map(p => parseInt(p.birthYear));
+  const minYear = Math.min(1880, ...(allBirths.length ? allBirths : [1880])) - 4;
+  const maxYear = Math.max(2026, youBirth || 2005) + 4;
+
+  const W = 1200;
+  const labelW = 200;
+  const rightPad = 30;
+  const plotW = W - labelW - rightPad;
+  const headerH = 95;
+  const rowH = 65;
+  const N = validPeople.length + (youBirth ? 1 : 0);
+  const footerH = 40;
+  const H = headerH + N * rowH + footerH;
+
+  const x = year => labelW + ((year - minYear) / (maxYear - minYear)) * plotW;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" id="timeline-svg" font-family="Inter, system-ui, sans-serif">`;
+  svg += `<rect width="${W}" height="${H}" fill="#fdfaf2"/>`;
+
+  // Holocaust era subtle band (1933-1945)
+  svg += `<rect x="${x(1933)}" y="${headerH - 6}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 6}" fill="rgba(122,59,46,0.05)"/>`;
+
+  // Wide-view events only
+  const wideEvents = EVENTS.filter(ev => WIDE_VIEW_YEARS.has(ev.year));
+  for (const ev of wideEvents) {
+    const ex = x(ev.year);
+    const isKey = ev.key;
+    svg += `<line x1="${ex}" y1="${headerH - 6}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#7a3b2e' : '#b8a98f'}" stroke-width="${isKey ? 1.4 : 0.8}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
+    const labelY = headerH - 10;
+    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="11" fill="${isKey ? '#7a3b2e' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${ev.year} · ${escapeXml(ev.label)}</text>`;
+  }
+
+  // Decade year ticks at bottom
+  const baseY = H - footerH + 8;
+  svg += `<line x1="${labelW}" y1="${baseY}" x2="${labelW + plotW}" y2="${baseY}" stroke="#2a2520" stroke-width="1"/>`;
+  for (let y = Math.ceil(minYear / 10) * 10; y <= maxYear; y += 10) {
+    const ex = x(y);
+    svg += `<line x1="${ex}" y1="${baseY}" x2="${ex}" y2="${baseY + 5}" stroke="#2a2520" stroke-width="0.6"/>`;
+    svg += `<text x="${ex}" y="${baseY + 19}" text-anchor="middle" font-size="11" fill="#2a2520">${y}</text>`;
+  }
+
+  // Person rows
+  let rowIdx = 0;
+  for (const p of validPeople) {
+    const y = headerH + rowIdx * rowH + rowH * 0.5;
+    const birth = parseInt(p.birthYear);
+    const isLiving = !p.deathYear;
+    const death = p.deathYear ? parseInt(p.deathYear) : (maxYear - 4);
+
+    if (rowIdx > 0) {
+      const sepY = headerH + rowIdx * rowH;
+      svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#ede5d3" stroke-width="0.5"/>`;
+    }
+
+    const name = p.name || `Person ${rowIdx + 1}`;
+    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="#2a2520" font-weight="600">${escapeXml(name)}</text>`;
+    if (p.relationship) {
+      svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="#6e645a" font-style="italic">${escapeXml(p.relationship)}</text>`;
+    }
+
+    svg += `<line x1="${x(birth)}" y1="${y}" x2="${x(death)}" y2="${y}" stroke="#4a5568" stroke-width="3.5" stroke-linecap="round"/>`;
+
+    svg += `<circle cx="${x(birth)}" cy="${y}" r="4.5" fill="#2a2520"/>`;
+    const birthLabel = `${birth}${p.birthplace ? ' · ' + p.birthplace : ''}`;
+    svg += `<text x="${x(birth)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#2a2520">${escapeXml(birthLabel)}</text>`;
+
+    if (!isLiving) {
+      svg += `<circle cx="${x(death)}" cy="${y}" r="4.5" fill="#2a2520"/>`;
+      svg += `<text x="${x(death)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#2a2520">${death}</text>`;
+    } else {
+      svg += `<polygon points="${x(death) - 4},${y - 5} ${x(death) + 4},${y} ${x(death) - 4},${y + 5}" fill="#4a5568"/>`;
+    }
+
+    // Age badges at 1933, 1939, 1945
+    for (const ky of KEY_YEARS) {
+      if (ky < birth || ky > death) continue;
+      const age = ky - birth;
+      const kx = x(ky);
+      svg += `<circle cx="${kx}" cy="${y}" r="12" fill="#fdfaf2" stroke="#7a3b2e" stroke-width="1.5"/>`;
+      svg += `<text x="${kx}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#7a3b2e" font-weight="600">${age}</text>`;
+    }
+
+    rowIdx++;
+  }
+
+  // You row
+  if (youBirth) {
+    const y = headerH + rowIdx * rowH + rowH * 0.5;
+    const sepY = headerH + rowIdx * rowH;
+    svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#7a3b2e" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.4"/>`;
+    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="#7a3b2e" font-weight="600">${escapeXml(youName)}</text>`;
+    svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="#7a3b2e" font-style="italic">you</text>`;
+    svg += `<line x1="${x(youBirth)}" y1="${y}" x2="${x(maxYear - 4)}" y2="${y}" stroke="#7a3b2e" stroke-width="3.5" stroke-linecap="round"/>`;
+    svg += `<circle cx="${x(youBirth)}" cy="${y}" r="4.5" fill="#7a3b2e"/>`;
+    svg += `<text x="${x(youBirth)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#7a3b2e">${youBirth}</text>`;
+    svg += `<polygon points="${x(maxYear - 4) - 4},${y - 5} ${x(maxYear - 4) + 4},${y} ${x(maxYear - 4) - 4},${y + 5}" fill="#7a3b2e"/>`;
+  }
+
+  svg += `<text x="${W - rightPad}" y="${H - 5}" text-anchor="end" font-size="9" fill="#a89e8f" font-style="italic">In perspective · PSYC 4790H</text>`;
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+// ---- Zoom timeline: 1930-1946, full event detail ----
+
+function renderZoomTimeline() {
+  const container = document.getElementById('zoom-timeline-container');
+  const validPeople = people.filter(p => p.birthYear && !isNaN(parseInt(p.birthYear)));
+
+  // Only people alive at some point during 1933-1945
+  const eraPeople = validPeople.filter(p => {
+    const birth = parseInt(p.birthYear);
+    const death = p.deathYear ? parseInt(p.deathYear) : 2100;
+    return birth <= 1945 && death >= 1933;
+  });
+
+  if (eraPeople.length === 0) {
+    container.innerHTML = '<div class="empty-state">Add someone who was alive during the war to see this view.</div>';
+    return;
+  }
+
+  const minYear = 1930;
+  const maxYear = 1946;
+  const eraEvents = EVENTS.filter(ev => ev.year >= minYear && ev.year <= maxYear);
+
+  const W = 1200;
+  const labelW = 200;
+  const rightPad = 30;
+  const plotW = W - labelW - rightPad;
+  const headerH = 240; // taller for full event names
+  const rowH = 75;
+  const N = eraPeople.length;
+  const footerH = 45;
+  const H = headerH + N * rowH + footerH;
+
+  const x = year => labelW + ((year - minYear) / (maxYear - minYear)) * plotW;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" id="zoom-timeline-svg" font-family="Inter, system-ui, sans-serif">`;
+  svg += `<rect width="${W}" height="${H}" fill="#fdfaf2"/>`;
+
+  // Era band 1933-1945
+  svg += `<rect x="${x(1933)}" y="${headerH - 10}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 10}" fill="rgba(122,59,46,0.05)"/>`;
+
+  // Events with full vertical labels
+  for (const ev of eraEvents) {
+    const ex = x(ev.year);
+    const isKey = ev.key;
+    svg += `<line x1="${ex}" y1="${headerH - 10}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#7a3b2e' : '#b8a98f'}" stroke-width="${isKey ? 1.5 : 0.9}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
+    const labelY = headerH - 14;
+    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="12" fill="${isKey ? '#7a3b2e' : '#2a2520'}" font-weight="${isKey ? '700' : '600'}">${ev.year}</text>`;
+    // Event name, smaller, offset further from the line
+    svg += `<text x="${ex - 14}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex - 14} ${labelY})" font-size="11" fill="${isKey ? '#7a3b2e' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${escapeXml(ev.label)}</text>`;
+  }
+
+  // Year ticks at bottom — every year
+  const baseY = H - footerH + 8;
+  svg += `<line x1="${labelW}" y1="${baseY}" x2="${labelW + plotW}" y2="${baseY}" stroke="#2a2520" stroke-width="1"/>`;
+  for (let y = minYear; y <= maxYear; y++) {
+    const ex = x(y);
+    const isMajor = (y % 5 === 0);
+    svg += `<line x1="${ex}" y1="${baseY}" x2="${ex}" y2="${baseY + (isMajor ? 6 : 3)}" stroke="#2a2520" stroke-width="0.6"/>`;
+    if (isMajor) {
+      svg += `<text x="${ex}" y="${baseY + 21}" text-anchor="middle" font-size="11" fill="#2a2520">${y}</text>`;
+    }
+  }
+
+  // Person rows
+  let rowIdx = 0;
+  for (const p of eraPeople) {
+    const y = headerH + rowIdx * rowH + rowH * 0.5;
+    const birth = parseInt(p.birthYear);
+    const death = p.deathYear ? parseInt(p.deathYear) : 2100;
+    const lineStart = Math.max(birth, minYear);
+    const lineEnd = Math.min(death, maxYear);
+
+    if (rowIdx > 0) {
+      const sepY = headerH + rowIdx * rowH;
+      svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#ede5d3" stroke-width="0.5"/>`;
+    }
+
+    const name = p.name || `Person ${rowIdx + 1}`;
+    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="#2a2520" font-weight="600">${escapeXml(name)}</text>`;
+    if (p.relationship) {
+      svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="#6e645a" font-style="italic">${escapeXml(p.relationship)}</text>`;
+    }
+
+    svg += `<line x1="${x(lineStart)}" y1="${y}" x2="${x(lineEnd)}" y2="${y}" stroke="#4a5568" stroke-width="3.5" stroke-linecap="round"/>`;
+
+    // Birth marker (only if birth is within zoom range)
+    if (birth >= minYear) {
+      svg += `<circle cx="${x(birth)}" cy="${y}" r="4.5" fill="#2a2520"/>`;
+      svg += `<text x="${x(birth)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#2a2520">${birth}</text>`;
+    } else {
+      svg += `<polygon points="${x(minYear) + 5},${y - 5} ${x(minYear) - 3},${y} ${x(minYear) + 5},${y + 5}" fill="#4a5568"/>`;
+    }
+
+    // Death marker (only if death is within zoom range)
+    if (p.deathYear && death <= maxYear) {
+      svg += `<circle cx="${x(death)}" cy="${y}" r="4.5" fill="#2a2520"/>`;
+      svg += `<text x="${x(death)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#2a2520">${death}</text>`;
+    } else {
+      svg += `<polygon points="${x(maxYear) - 5},${y - 5} ${x(maxYear) + 3},${y} ${x(maxYear) - 5},${y + 5}" fill="#4a5568"/>`;
+    }
+
+    // Age circles at every event
+    for (const ev of eraEvents) {
+      if (ev.year < birth || ev.year > death) continue;
+      const age = ev.year - birth;
+      const ex = x(ev.year);
+      const isKey = ev.key;
+      svg += `<circle cx="${ex}" cy="${y}" r="13" fill="#fdfaf2" stroke="${isKey ? '#7a3b2e' : '#a86a5e'}" stroke-width="${isKey ? 1.8 : 1.3}"/>`;
+      svg += `<text x="${ex}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#7a3b2e" font-weight="${isKey ? '700' : '600'}">${age}</text>`;
+    }
+
+    rowIdx++;
+  }
+
+  svg += `<text x="${W - rightPad}" y="${H - 5}" text-anchor="end" font-size="9" fill="#a89e8f" font-style="italic">Through the Holocaust era · PSYC 4790H</text>`;
+  svg += '</svg>';
+  container.innerHTML = svg;
+}
+
+function renderWartimePanel() {
+  const target = document.getElementById('wartime-section');
+  const peopleWithWartime = people.filter(p => p.birthYear && p.wartime && p.wartime.trim());
+
+  if (peopleWithWartime.length === 0) {
+    target.innerHTML = '';
+    return;
+  }
+
+  let html = '<div class="reference-panel"><h3>During the war (1939–1945)</h3><ul class="wartime-list">';
+  for (const p of peopleWithWartime) {
+    const name = p.name || 'Unnamed person';
+    const rel = p.relationship ? ` <em>(${escapeXml(p.relationship)})</em>` : '';
+    const birth = parseInt(p.birthYear);
+    let ageNote = '';
+    if (birth <= 1939) {
+      ageNote = ` <em>— age ${1939 - birth} at start, ${1945 - birth} at end</em>`;
+    } else if (birth <= 1945) {
+      ageNote = ` <em>— born ${birth}, age ${1945 - birth} at war's end</em>`;
+    }
+    html += `<li><strong>${escapeXml(name)}</strong>${rel}${ageNote}: ${escapeXml(p.wartime)}</li>`;
+  }
+  html += '</ul></div>';
+  target.innerHTML = html;
+}
+
+function renderByEventPanel() {
+  const target = document.getElementById('by-event-section');
+  const validPeople = people.filter(p => p.birthYear && !isNaN(parseInt(p.birthYear)));
+
+  if (validPeople.length === 0) {
+    target.innerHTML = '';
+    return;
+  }
+
+  let html = '<div class="reference-panel"><h3>Who was alive when?</h3>';
+
+  for (const ev of EVENTS) {
+    const peopleAlive = validPeople
+      .filter(p => {
+        const birth = parseInt(p.birthYear);
+        const death = p.deathYear ? parseInt(p.deathYear) : 2100;
+        return ev.year >= birth && ev.year <= death;
+      })
+      .sort((a, b) => parseInt(a.birthYear) - parseInt(b.birthYear));
+
+    if (peopleAlive.length === 0) continue;
+
+    const title = `<span class="year">${ev.year}</span> — ${escapeXml(ev.label)}`;
+    html += `<div class="checkpoint">`;
+    html += `<div class="checkpoint-title">${title}</div>`;
+    html += `<ul>`;
+    for (const p of peopleAlive) {
+      const age = ev.year - parseInt(p.birthYear);
+      const name = p.name || 'Unnamed person';
+      const rel = p.relationship ? ` (${p.relationship})` : '';
+      html += `<li><span class="person-name">${escapeXml(name)}${escapeXml(rel)}</span><span class="age-loc">: age ${age}</span></li>`;
+    }
+    html += `</ul></div>`;
+  }
+
+  html += '</div>';
+  target.innerHTML = html;
+}
+
+// ---- Downloads ----
+
+function svgToPng(svgEl, filename) {
+  const clone = svgEl.cloneNode(true);
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const svgData = new XMLSerializer().serializeToString(clone);
+  const vb = svgEl.viewBox.baseVal;
+  const scale = 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = vb.width * scale;
+  canvas.height = vb.height * scale;
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  const blob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  return new Promise((resolve, reject) => {
+    img.onload = function () {
+      ctx.fillStyle = '#fdfaf2';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(function (b) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        resolve();
+      }, 'image/png');
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      reject(new Error('Image export failed'));
+    };
+    img.src = url;
+  });
+}
+
+async function downloadPNG() {
+  const wide = document.getElementById('timeline-svg');
+  const zoom = document.getElementById('zoom-timeline-svg');
+  if (!wide) { alert('Add a person first.'); return; }
+  try {
+    await svgToPng(wide, 'family-lifelines-overview.png');
+    if (zoom) {
+      // Slight delay to let the first download dialog start
+      await new Promise(r => setTimeout(r, 400));
+      await svgToPng(zoom, 'family-lifelines-war-era.png');
+    }
+  } catch (e) {
+    alert('Image export failed. Try the Print / Save as PDF option instead.');
+  }
+}
+
+function saveData() {
+  const data = {
+    version: 2,
+    you: {
+      name: document.getElementById('you-name').value,
+      birthYear: document.getElementById('you-birthyear').value
+    },
+    people: people
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'family-lifelines-data.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// Apply a saved data object (from a backup file or from browser storage)
+// to the form and re-render. Ids are reassigned sequentially so a file
+// with missing or duplicate ids can never collide.
+function applyData(data) {
+  if (!data || typeof data !== 'object') return;
+  if (data.you) {
+    document.getElementById('you-name').value = data.you.name || '';
+    document.getElementById('you-birthyear').value = data.you.birthYear || '';
+  }
+  if (Array.isArray(data.people)) {
+    people = data.people.map((p, i) => ({
+      id: i + 1,
+      name: p.name || '',
+      relationship: p.relationship || '',
+      birthYear: p.birthYear || '',
+      deathYear: p.deathYear || '',
+      birthplace: p.birthplace || '',
+      wartime: p.wartime || ''
+    }));
+    nextId = people.length + 1;
+  }
+  renderAll();
+}
+
+function loadData(file) {
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      applyData(JSON.parse(e.target.result));
+    } catch (err) {
+      alert('That file could not be read.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ---- Auto-save (browser-local only; nothing is ever transmitted) ----
+// Entries are written to this browser's localStorage so work survives
+// closing the tab. This data stays on the student's own device — there
+// is no server and no network request anywhere in this page.
+const STORAGE_KEY = 'familyLifelines.v2';
+
+function persist() {
+  try {
+    const data = {
+      version: 2,
+      you: {
+        name: document.getElementById('you-name').value,
+        birthYear: document.getElementById('you-birthyear').value
+      },
+      people: people
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    // Storage may be unavailable (private mode, disabled, full).
+    // Auto-save silently does nothing; the Save/Load file still works.
+  }
+}
+
+function restore() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    applyData(JSON.parse(raw));
+  } catch (e) {
+    // Corrupt or unreadable storage — start fresh rather than break.
+  }
+}
+
+// ---- Init ----
+
+document.getElementById('add-person').addEventListener('click', () => addPerson());
+document.getElementById('you-name').addEventListener('input', () => { renderTimeline(); renderByEventPanel(); persist(); });
+document.getElementById('you-birthyear').addEventListener('input', () => { renderTimeline(); renderByEventPanel(); persist(); });
+document.getElementById('download-png').addEventListener('click', downloadPNG);
+document.getElementById('print-btn').addEventListener('click', () => window.print());
+document.getElementById('save-data').addEventListener('click', saveData);
+document.getElementById('load-data').addEventListener('change', e => {
+  if (e.target.files && e.target.files[0]) loadData(e.target.files[0]);
+});
+
+restore();
+if (people.length === 0) {
+  addPerson();
+}
+</script>
+</body>
+</html>
