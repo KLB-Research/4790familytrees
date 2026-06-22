@@ -16,11 +16,30 @@ The page is a single static HTML file. It has no account, no server, and makes n
 
 ## How students hand in their work
 
-- **Download as images (PNG)** — exports both timelines, or
-- **Print / Save as PDF** — a print-formatted version of the timelines and summary panels.
+**Print / Save as PDF** is the deliverable. The PDF opens with an **APA 7 student title page** (built automatically from the student's name + number and the course details in CONFIG), followed by both timelines and the summary panels. **Download as images (PNG)** is also available for the two timelines on their own.
 
 ## Editing the assignment
 
 Everything lives in `index.html` (HTML, CSS, and JavaScript in one file). Edit it, commit, and push — GitHub Pages redeploys automatically and the link stays the same.
+
+**Routine changes (e.g. the due date each term):** edit the `CONFIG` block at the top of the `<script>` in `index.html`. It holds the assignment title, course code/name, department, institution, instructor, and **due date** — one line each. Change the `dueDate` line for the winter cohort and push:
+
+```js
+const CONFIG = {
+  assignmentTitle: "Family Lifelines: A Holocaust-Era Family Timeline",
+  courseCode:      "PSYC 4790",
+  courseName:      "Social Psychology of the Holocaust",
+  department:      "Department of Psychology",
+  institution:     "Trent University",
+  instructor:      "Dr. Karen L. Blair",
+  dueDate:         "September 14, 2026"   // ← change this for the winter cohort
+};
+```
+
+**Intro/instruction wording** lives in the page body (the `intro-text` section). **The historical events** on the timelines are the `EVENTS` array, just below `CONFIG`.
+
+**Adding the logos:** in the `<div class="logos">` near the top of the body, replace the two placeholder `<span class="logo-placeholder">` chips with `<img>` tags pointing at logo files committed to this repo, e.g. `<img src="trent-logo.png" alt="Trent University">`.
+
+To push changes: `git commit -am "…"` then `git push`. Or just ask Claude Code to make the change.
 
 Maintained by KLB Research (SRAD Lab), Dr. Karen L. Blair.

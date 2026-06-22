@@ -14,10 +14,14 @@
     --ink: #2a2520;
     --muted: #6e645a;
     --line: #d6c9b4;
-    --accent: #7a3b2e;
-    --accent-soft: rgba(122, 59, 46, 0.08);
+    /* Trent University palette */
+    --green: #00512F;        /* Trent green — primary brand colour */
+    --green-soft: rgba(0, 81, 47, 0.07);
+    --blue: #5D86A0;         /* Trent blue — supporting */
+    --accent: #B15533;       /* Trent rust — Holocaust-era accent */
+    --accent-soft: rgba(177, 85, 51, 0.09);
     --lifeline: #4a5568;
-    --you: #7a3b2e;
+    --you: #00512F;
     --serif: 'Crimson Pro', Georgia, 'Times New Roman', serif;
     --sans: 'Inter', system-ui, -apple-system, sans-serif;
   }
@@ -30,22 +34,40 @@
     line-height: 1.55;
     font-size: 15px;
   }
-  .container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.75rem 4rem; }
-  header { margin-bottom: 2rem; }
-  h1 {
-    font-family: var(--serif);
-    font-size: 2.4rem;
-    font-weight: 600;
-    margin: 0 0 0.25rem;
-    letter-spacing: -0.01em;
+  .container { max-width: 1200px; margin: 0 auto; padding: 2.25rem 1.75rem 4rem; }
+
+  /* Trent-green masthead band (full bleed) */
+  .masthead { background: var(--green); color: #fff; padding: 1.4rem 0; }
+  .masthead-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 1.75rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; flex-wrap: wrap;
   }
-  .subtitle { color: var(--muted); margin: 0; font-size: 1.05rem; font-style: italic; }
+  .masthead .course-tag {
+    font-size: 0.72rem; letter-spacing: 0.09em; text-transform: uppercase;
+    color: rgba(255,255,255,0.78); margin: 0 0 0.35rem; font-weight: 500;
+  }
+  .masthead h1 {
+    font-family: var(--serif); font-size: 2.3rem; font-weight: 600;
+    margin: 0; letter-spacing: -0.01em; color: #fff; line-height: 1.1;
+  }
+  .masthead .subtitle { color: rgba(255,255,255,0.85); margin: 0.2rem 0 0; font-size: 1.02rem; font-style: italic; }
+  .masthead .logos { display: flex; align-items: center; gap: 1.1rem; flex-shrink: 0; }
+  .masthead .logos img { height: 52px; width: auto; display: block; }
+  /* Placeholder chips — removed once real logo files are dropped in */
+  .logo-placeholder {
+    font-size: 0.7rem; letter-spacing: 0.05em; color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.45); border-radius: 3px;
+    padding: 0.5rem 0.7rem; text-align: center; line-height: 1.25;
+  }
+
   h2 {
     font-family: var(--serif);
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0 0 0.25rem;
-    border-bottom: 1px solid var(--line);
+    color: var(--green);
+    border-bottom: 2px solid var(--green);
     padding-bottom: 0.4rem;
   }
   .section-blurb {
@@ -53,13 +75,13 @@
     color: var(--muted);
     margin: 0 0 0.75rem;
     font-style: italic;
-    max-width: 720px;
   }
   section { margin-bottom: 2.25rem; }
-  .intro-text p { margin: 0 0 0.85rem; max-width: 720px; }
+  .intro-text { margin-top: 2rem; }
+  .intro-text p { margin: 0 0 0.85rem; }
   .privacy {
-    background: var(--panel);
-    border-left: 3px solid var(--accent);
+    background: var(--green-soft);
+    border-left: 3px solid var(--green);
     padding: 0.75rem 1rem;
     font-size: 0.9rem;
     color: var(--muted);
@@ -146,18 +168,18 @@
     font-family: var(--sans);
     font-size: 0.95rem;
     padding: 0.55rem 1.1rem;
-    background: var(--ink);
-    color: var(--panel);
+    background: var(--green);
+    color: #fff;
     border: none;
     border-radius: 3px;
     cursor: pointer;
     transition: background 0.15s;
   }
   button.btn-add { margin-top: 0.5rem; background: var(--accent); }
-  button.btn-add:hover, .actions button:hover, .actions .btn-load:hover {
-    background: #1a1612;
+  .actions button:hover, .actions .btn-load:hover {
+    background: #003a22;
   }
-  button.btn-add:hover { background: #5a2c22; }
+  button.btn-add:hover { background: #8f4329; }
   .actions {
     display: flex;
     gap: 0.75rem;
@@ -239,7 +261,7 @@
 
   @media print {
     body { background: white; color: black; }
-    header, .intro-text, .you-section, .family-section, .actions, .print-hide { display: none !important; }
+    .masthead, .intro-text, .you-section, .family-section, .actions, .print-hide { display: none !important; }
     .print-only { display: block; }
     .container { padding: 0; max-width: none; }
     .timeline-section h2, .reference-panel h3 { border: none; }
@@ -247,26 +269,50 @@
     .reference-panel { border: none; background: white; padding: 0.5rem 0 0; margin-top: 1rem; page-break-inside: avoid; }
     .timeline-section { page-break-after: avoid; }
     .zoom-timeline-section { page-break-before: always; }
-    .print-header {
+
+    /* APA 7 student title page — portrait, double-spaced, 1-inch margins */
+    .title-page {
+      page: titlepage;
+      page-break-after: always;
       font-family: var(--serif);
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 0.6rem;
-      padding-bottom: 0.3rem;
-      border-bottom: 1px solid #888;
+      color: black;
+      text-align: center;
+      font-size: 12pt;
+      line-height: 2;
     }
+    .title-page .tp-spacer { height: 5cm; }
+    .title-page .tp-title { font-size: 12pt; font-weight: 700; margin: 0; }
+    .title-page .tp-block { margin-top: 2em; }
+    .title-page .tp-block p { margin: 0; }
+
     @page { size: landscape; margin: 1.2cm; }
+    @page titlepage { size: portrait; margin: 2.54cm; }
   }
 </style>
 </head>
 <body>
-<div class="container">
-  <header class="print-hide">
-    <h1>Family Lifelines</h1>
-    <p class="subtitle">A Holocaust-era timeline of the people in your family.</p>
-  </header>
+<div class="masthead print-hide">
+  <div class="masthead-inner">
+    <div class="brand-text">
+      <p class="course-tag">Trent University · PSYC 4790H · Social Psychology of the Holocaust</p>
+      <h1>Family Lifelines</h1>
+      <p class="subtitle">A Holocaust-era timeline of the people in your family.</p>
+    </div>
+    <div class="logos" id="logos">
+      <!-- LOGOS: replace the two placeholder spans below with <img> tags once the logo
+           files are added to the repo, e.g.:
+           <img src="trent-logo.png" alt="Trent University">
+           <img src="klb-logo.png" alt="KLB Research"> -->
+      <span class="logo-placeholder">Trent<br>University</span>
+      <span class="logo-placeholder">KLB<br>Research</span>
+    </div>
+  </div>
+</div>
 
-  <div class="print-only print-header" id="print-header">Family Lifelines</div>
+<div class="container">
+
+  <!-- APA title page — only appears in the printed / PDF output, built from CONFIG + your details -->
+  <div class="print-only title-page" id="title-page"></div>
 
   <section class="intro-text print-hide">
     <p>The question this exercise asks is not <em>who were your grandparents</em>, but <strong>who in your family was alive between 1900 and 1950</strong>. For most of you that probably means great-grandparents and great-great-grandparents — though it could also include great-aunts, great-uncles, or anyone else you can identify from those generations.</p>
@@ -276,13 +322,17 @@
   </section>
 
   <section class="you-section print-hide">
-    <h2>You</h2>
+    <h2>Your details</h2>
+    <p class="section-blurb">Your name and student number appear on the APA title page of the PDF you hand in. Your first name and birth year also place you on the timeline.</p>
     <div class="form-row">
-      <label>Your name (optional)
-        <input id="you-name" type="text" placeholder="e.g., Emma">
+      <label>Full name (for the title page)
+        <input id="you-name" type="text" placeholder="e.g., Emma Tremblay">
+      </label>
+      <label>Student number
+        <input id="you-studentnum" type="text" placeholder="e.g., 0123456">
       </label>
       <label>Your birth year
-        <input id="you-birthyear" type="number" min="1990" max="2020">
+        <input id="you-birthyear" type="number" min="1990" max="2020" placeholder="e.g., 2004">
       </label>
     </div>
   </section>
@@ -319,12 +369,27 @@
     <label class="btn-load">Load saved entries
       <input id="load-data" type="file" accept=".json" style="display:none">
     </label>
-    <p class="actions-note"><strong>Save my entries</strong> downloads a small file to your computer that you can reload later. It's a backup, not an account — keep the file somewhere you'll find it. To hand in your work, use <strong>Download as images</strong> (you'll get both timelines) or <strong>Print / Save as PDF</strong>.</p>
+    <p class="actions-note"><strong>To hand in your work:</strong> use <strong>Print / Save as PDF</strong> — the PDF opens with an APA title page (built from your name, student number, and the course details) followed by both timelines. <strong>Save my entries</strong> is a separate backup: it downloads a small file you can reload later if you switch computers or clear your browser. It's a backup, not an account — keep it somewhere you'll find it.</p>
   </section>
 </div>
 
 <script>
 "use strict";
+
+// ============================================================================
+//  COURSE CONFIG  —  edit these lines between terms, then commit & push.
+//  This is the ONLY block you need to touch for routine changes (e.g. the due
+//  date for the winter cohort). Everything below it is the app itself.
+// ============================================================================
+const CONFIG = {
+  assignmentTitle: "Family Lifelines: A Holocaust-Era Family Timeline",
+  courseCode:      "PSYC 4790",
+  courseName:      "Social Psychology of the Holocaust",
+  department:      "Department of Psychology",
+  institution:     "Trent University",
+  instructor:      "Dr. Karen L. Blair",
+  dueDate:         "September 14, 2026"   // ← change this for the winter cohort
+};
 
 // Three key years for the visual age badges on the wide view
 const KEY_YEARS = [1933, 1939, 1945];
@@ -390,6 +455,7 @@ function renderAll() {
   renderZoomTimeline();
   renderWartimePanel();
   renderByEventPanel();
+  renderTitlePage();
   persist();
 }
 
@@ -453,8 +519,32 @@ function renderForm() {
 function getYouInfo() {
   const yb = document.getElementById('you-birthyear').value;
   const youBirth = yb ? parseInt(yb) : null;
-  const youName = document.getElementById('you-name').value || 'You';
+  const fullName = document.getElementById('you-name').value.trim();
+  // Timeline label uses the first name only, to keep the row compact.
+  const youName = fullName ? fullName.split(/\s+/)[0] : 'You';
   return {youBirth, youName};
+}
+
+// Build the APA 7 student title page (shown only when printing / saving as PDF).
+function renderTitlePage() {
+  const el = document.getElementById('title-page');
+  if (!el) return;
+  const fullName = document.getElementById('you-name').value.trim() || '[Your full name]';
+  const sNum = document.getElementById('you-studentnum').value.trim();
+  const lines = [
+    fullName,
+    sNum ? `Student Number: ${sNum}` : '',
+    `${CONFIG.department}, ${CONFIG.institution}`,
+    `${CONFIG.courseCode}: ${CONFIG.courseName}`,
+    CONFIG.instructor,
+    CONFIG.dueDate
+  ].filter(Boolean);
+  el.innerHTML =
+    `<div class="tp-spacer"></div>` +
+    `<p class="tp-title">${escapeXml(CONFIG.assignmentTitle)}</p>` +
+    `<div class="tp-block">` +
+    lines.map(l => `<p>${escapeXml(l)}</p>`).join('') +
+    `</div>`;
 }
 
 // ---- Wide "in perspective" timeline ----
@@ -464,9 +554,7 @@ function renderTimeline() {
   const {youBirth, youName} = getYouInfo();
   const validPeople = people.filter(p => p.birthYear && !isNaN(parseInt(p.birthYear)));
 
-  const phName = document.getElementById('you-name').value;
-  document.getElementById('print-header').textContent =
-    phName ? `Family Lifelines — ${phName}` : 'Family Lifelines';
+  renderTitlePage();
 
   if (validPeople.length === 0 && !youBirth) {
     container.innerHTML = '<div class="empty-state">Add a person above to see your timeline.</div>';
@@ -493,16 +581,16 @@ function renderTimeline() {
   svg += `<rect width="${W}" height="${H}" fill="#fdfaf2"/>`;
 
   // Holocaust era subtle band (1933-1945)
-  svg += `<rect x="${x(1933)}" y="${headerH - 6}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 6}" fill="rgba(122,59,46,0.05)"/>`;
+  svg += `<rect x="${x(1933)}" y="${headerH - 6}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 6}" fill="rgba(177,85,51,0.06)"/>`;
 
   // Wide-view events only
   const wideEvents = EVENTS.filter(ev => WIDE_VIEW_YEARS.has(ev.year));
   for (const ev of wideEvents) {
     const ex = x(ev.year);
     const isKey = ev.key;
-    svg += `<line x1="${ex}" y1="${headerH - 6}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#7a3b2e' : '#b8a98f'}" stroke-width="${isKey ? 1.4 : 0.8}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
+    svg += `<line x1="${ex}" y1="${headerH - 6}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#B15533' : '#b8a98f'}" stroke-width="${isKey ? 1.4 : 0.8}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
     const labelY = headerH - 10;
-    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="11" fill="${isKey ? '#7a3b2e' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${ev.year} · ${escapeXml(ev.label)}</text>`;
+    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="11" fill="${isKey ? '#B15533' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${ev.year} · ${escapeXml(ev.label)}</text>`;
   }
 
   // Decade year ticks at bottom
@@ -551,8 +639,8 @@ function renderTimeline() {
       if (ky < birth || ky > death) continue;
       const age = ky - birth;
       const kx = x(ky);
-      svg += `<circle cx="${kx}" cy="${y}" r="12" fill="#fdfaf2" stroke="#7a3b2e" stroke-width="1.5"/>`;
-      svg += `<text x="${kx}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#7a3b2e" font-weight="600">${age}</text>`;
+      svg += `<circle cx="${kx}" cy="${y}" r="12" fill="#fdfaf2" stroke="#B15533" stroke-width="1.5"/>`;
+      svg += `<text x="${kx}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#B15533" font-weight="600">${age}</text>`;
     }
 
     rowIdx++;
@@ -562,13 +650,13 @@ function renderTimeline() {
   if (youBirth) {
     const y = headerH + rowIdx * rowH + rowH * 0.5;
     const sepY = headerH + rowIdx * rowH;
-    svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#7a3b2e" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.4"/>`;
-    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="#7a3b2e" font-weight="600">${escapeXml(youName)}</text>`;
-    svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="#7a3b2e" font-style="italic">you</text>`;
-    svg += `<line x1="${x(youBirth)}" y1="${y}" x2="${x(maxYear - 4)}" y2="${y}" stroke="#7a3b2e" stroke-width="3.5" stroke-linecap="round"/>`;
-    svg += `<circle cx="${x(youBirth)}" cy="${y}" r="4.5" fill="#7a3b2e"/>`;
-    svg += `<text x="${x(youBirth)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#7a3b2e">${youBirth}</text>`;
-    svg += `<polygon points="${x(maxYear - 4) - 4},${y - 5} ${x(maxYear - 4) + 4},${y} ${x(maxYear - 4) - 4},${y + 5}" fill="#7a3b2e"/>`;
+    svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#00512F" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.4"/>`;
+    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="#00512F" font-weight="600">${escapeXml(youName)}</text>`;
+    svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="#00512F" font-style="italic">you</text>`;
+    svg += `<line x1="${x(youBirth)}" y1="${y}" x2="${x(maxYear - 4)}" y2="${y}" stroke="#00512F" stroke-width="3.5" stroke-linecap="round"/>`;
+    svg += `<circle cx="${x(youBirth)}" cy="${y}" r="4.5" fill="#00512F"/>`;
+    svg += `<text x="${x(youBirth)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#00512F">${youBirth}</text>`;
+    svg += `<polygon points="${x(maxYear - 4) - 4},${y - 5} ${x(maxYear - 4) + 4},${y} ${x(maxYear - 4) - 4},${y + 5}" fill="#00512F"/>`;
   }
 
   svg += `<text x="${W - rightPad}" y="${H - 5}" text-anchor="end" font-size="9" fill="#a89e8f" font-style="italic">In perspective · PSYC 4790H</text>`;
@@ -614,17 +702,17 @@ function renderZoomTimeline() {
   svg += `<rect width="${W}" height="${H}" fill="#fdfaf2"/>`;
 
   // Era band 1933-1945
-  svg += `<rect x="${x(1933)}" y="${headerH - 10}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 10}" fill="rgba(122,59,46,0.05)"/>`;
+  svg += `<rect x="${x(1933)}" y="${headerH - 10}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 10}" fill="rgba(177,85,51,0.06)"/>`;
 
   // Events with full vertical labels
   for (const ev of eraEvents) {
     const ex = x(ev.year);
     const isKey = ev.key;
-    svg += `<line x1="${ex}" y1="${headerH - 10}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#7a3b2e' : '#b8a98f'}" stroke-width="${isKey ? 1.5 : 0.9}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
+    svg += `<line x1="${ex}" y1="${headerH - 10}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#B15533' : '#b8a98f'}" stroke-width="${isKey ? 1.5 : 0.9}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
     const labelY = headerH - 14;
-    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="12" fill="${isKey ? '#7a3b2e' : '#2a2520'}" font-weight="${isKey ? '700' : '600'}">${ev.year}</text>`;
+    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="12" fill="${isKey ? '#B15533' : '#2a2520'}" font-weight="${isKey ? '700' : '600'}">${ev.year}</text>`;
     // Event name, smaller, offset further from the line
-    svg += `<text x="${ex - 14}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex - 14} ${labelY})" font-size="11" fill="${isKey ? '#7a3b2e' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${escapeXml(ev.label)}</text>`;
+    svg += `<text x="${ex - 14}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex - 14} ${labelY})" font-size="11" fill="${isKey ? '#B15533' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${escapeXml(ev.label)}</text>`;
   }
 
   // Year ticks at bottom — every year
@@ -683,8 +771,8 @@ function renderZoomTimeline() {
       const age = ev.year - birth;
       const ex = x(ev.year);
       const isKey = ev.key;
-      svg += `<circle cx="${ex}" cy="${y}" r="13" fill="#fdfaf2" stroke="${isKey ? '#7a3b2e' : '#a86a5e'}" stroke-width="${isKey ? 1.8 : 1.3}"/>`;
-      svg += `<text x="${ex}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#7a3b2e" font-weight="${isKey ? '700' : '600'}">${age}</text>`;
+      svg += `<circle cx="${ex}" cy="${y}" r="13" fill="#fdfaf2" stroke="${isKey ? '#B15533' : '#c47a5e'}" stroke-width="${isKey ? 1.8 : 1.3}"/>`;
+      svg += `<text x="${ex}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#B15533" font-weight="${isKey ? '700' : '600'}">${age}</text>`;
     }
 
     rowIdx++;
@@ -820,6 +908,7 @@ function saveData() {
     version: 2,
     you: {
       name: document.getElementById('you-name').value,
+      studentNumber: document.getElementById('you-studentnum').value,
       birthYear: document.getElementById('you-birthyear').value
     },
     people: people
@@ -840,6 +929,7 @@ function applyData(data) {
   if (!data || typeof data !== 'object') return;
   if (data.you) {
     document.getElementById('you-name').value = data.you.name || '';
+    document.getElementById('you-studentnum').value = data.you.studentNumber || '';
     document.getElementById('you-birthyear').value = data.you.birthYear || '';
   }
   if (Array.isArray(data.people)) {
@@ -905,7 +995,8 @@ function restore() {
 // ---- Init ----
 
 document.getElementById('add-person').addEventListener('click', () => addPerson());
-document.getElementById('you-name').addEventListener('input', () => { renderTimeline(); renderByEventPanel(); persist(); });
+document.getElementById('you-name').addEventListener('input', () => { renderTimeline(); renderByEventPanel(); renderTitlePage(); persist(); });
+document.getElementById('you-studentnum').addEventListener('input', () => { renderTitlePage(); persist(); });
 document.getElementById('you-birthyear').addEventListener('input', () => { renderTimeline(); renderByEventPanel(); persist(); });
 document.getElementById('download-png').addEventListener('click', downloadPNG);
 document.getElementById('print-btn').addEventListener('click', () => window.print());
