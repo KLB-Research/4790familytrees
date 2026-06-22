@@ -6,7 +6,7 @@ Students enter the people in their family who were alive between roughly 1900 an
 
 ## Live link
 
-**https://klbresearch.github.io/4790familytrees/**
+**https://klb-research.github.io/4790familytrees/**
 
 Send students to that one URL. Nothing to install.
 
