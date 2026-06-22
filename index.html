@@ -18,8 +18,8 @@
     --green: #00512F;        /* Trent green — primary brand colour */
     --green-soft: rgba(0, 81, 47, 0.07);
     --blue: #5D86A0;         /* Trent blue — supporting */
-    --accent: #B15533;       /* Trent rust — Holocaust-era accent */
-    --accent-soft: rgba(177, 85, 51, 0.09);
+    --accent: #2B7A8E;       /* Trent blue/teal — Holocaust-era accent */
+    --accent-soft: rgba(43, 122, 142, 0.10);
     --lifeline: #4a5568;
     --you: #00512F;
     --serif: 'Crimson Pro', Georgia, 'Times New Roman', serif;
@@ -179,7 +179,7 @@
   .actions button:hover, .actions .btn-load:hover {
     background: #003a22;
   }
-  button.btn-add:hover { background: #8f4329; }
+  button.btn-add:hover { background: #226576; }
   .actions {
     display: flex;
     gap: 0.75rem;
@@ -257,6 +257,26 @@
   .checkpoint .person-name { font-weight: 500; }
   .checkpoint .age-loc { color: var(--muted); }
 
+  /* Clear / start-over button — quiet, with a cautionary hover */
+  .actions button.btn-clear { background: none; color: var(--muted); border: 1px solid var(--line); }
+  .actions button.btn-clear:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+  /* White plate so the standard colour logos read on the dark green band */
+  .masthead .logos .logo-plate {
+    background: #fff; border-radius: 6px; padding: 0.5rem 0.7rem;
+    display: flex; align-items: center; gap: 0.9rem;
+  }
+  .masthead .logos .logo-plate img { height: 40px; width: auto; display: block; }
+
+  /* Page footer (screen only) */
+  .site-footer {
+    border-top: 1px solid var(--line);
+    margin-top: 3rem; padding-top: 1.25rem;
+    font-size: 0.8rem; color: var(--muted); line-height: 1.6;
+  }
+  .site-footer strong { color: var(--ink); }
+  .site-footer .footer-brand { color: var(--green); font-weight: 600; }
+
   .print-only { display: none; }
 
   @media print {
@@ -296,7 +316,7 @@
     <div class="brand-text">
       <p class="course-tag">Trent University · PSYC 4790H · Social Psychology of the Holocaust</p>
       <h1>Family Lifelines</h1>
-      <p class="subtitle">A Holocaust-era timeline of the people in your family.</p>
+      <p class="subtitle">Building your family timeline for PSYC 4790.</p>
     </div>
     <div class="logos" id="logos">
       <!-- LOGOS: replace the two placeholder spans below with <img> tags once the logo
@@ -369,8 +389,14 @@
     <label class="btn-load">Load saved entries
       <input id="load-data" type="file" accept=".json" style="display:none">
     </label>
-    <p class="actions-note"><strong>To hand in your work:</strong> use <strong>Print / Save as PDF</strong> — the PDF opens with an APA title page (built from your name, student number, and the course details) followed by both timelines. <strong>Save my entries</strong> is a separate backup: it downloads a small file you can reload later if you switch computers or clear your browser. It's a backup, not an account — keep it somewhere you'll find it.</p>
+    <button id="clear-all" class="btn-clear">Clear everything</button>
+    <p class="actions-note"><strong>To hand in your work:</strong> use <strong>Print / Save as PDF</strong> — the PDF opens with an APA title page (built from your name, student number, and the course details) followed by both timelines. <strong>Save my entries</strong> is a separate backup: it downloads a small file you can reload later if you switch computers or clear your browser. It's a backup, not an account — keep it somewhere you'll find it. <strong>Clear everything</strong> wipes this device's saved copy so you can start fresh — handy if you were just trying it out.</p>
   </section>
+
+  <footer class="site-footer print-hide">
+    <p><strong>A note on AI.</strong> This tool was built by Dr. Karen L. Blair with the help of an AI assistant (Claude). It's disclosed here in the spirit of the transparent, responsible AI use this course asks of you. The tool itself contains no AI: it sends your information nowhere and runs entirely in your own browser (see the privacy note above). When AI plays a role in your own work, name it the same way.</p>
+    <p class="footer-brand">PSYC 4790 · Social Psychology of the Holocaust · Trent University · KLB Research (SRAD Lab)</p>
+  </footer>
 </div>
 
 <script>
@@ -581,16 +607,16 @@ function renderTimeline() {
   svg += `<rect width="${W}" height="${H}" fill="#fdfaf2"/>`;
 
   // Holocaust era subtle band (1933-1945)
-  svg += `<rect x="${x(1933)}" y="${headerH - 6}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 6}" fill="rgba(177,85,51,0.06)"/>`;
+  svg += `<rect x="${x(1933)}" y="${headerH - 6}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 6}" fill="rgba(43,122,142,0.07)"/>`;
 
   // Wide-view events only
   const wideEvents = EVENTS.filter(ev => WIDE_VIEW_YEARS.has(ev.year));
   for (const ev of wideEvents) {
     const ex = x(ev.year);
     const isKey = ev.key;
-    svg += `<line x1="${ex}" y1="${headerH - 6}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#B15533' : '#b8a98f'}" stroke-width="${isKey ? 1.4 : 0.8}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
+    svg += `<line x1="${ex}" y1="${headerH - 6}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#2B7A8E' : '#b8a98f'}" stroke-width="${isKey ? 1.4 : 0.8}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
     const labelY = headerH - 10;
-    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="11" fill="${isKey ? '#B15533' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${ev.year} · ${escapeXml(ev.label)}</text>`;
+    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="11" fill="${isKey ? '#2B7A8E' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${ev.year} · ${escapeXml(ev.label)}</text>`;
   }
 
   // Decade year ticks at bottom
@@ -639,8 +665,8 @@ function renderTimeline() {
       if (ky < birth || ky > death) continue;
       const age = ky - birth;
       const kx = x(ky);
-      svg += `<circle cx="${kx}" cy="${y}" r="12" fill="#fdfaf2" stroke="#B15533" stroke-width="1.5"/>`;
-      svg += `<text x="${kx}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#B15533" font-weight="600">${age}</text>`;
+      svg += `<circle cx="${kx}" cy="${y}" r="12" fill="#fdfaf2" stroke="#2B7A8E" stroke-width="1.5"/>`;
+      svg += `<text x="${kx}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#2B7A8E" font-weight="600">${age}</text>`;
     }
 
     rowIdx++;
@@ -702,17 +728,17 @@ function renderZoomTimeline() {
   svg += `<rect width="${W}" height="${H}" fill="#fdfaf2"/>`;
 
   // Era band 1933-1945
-  svg += `<rect x="${x(1933)}" y="${headerH - 10}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 10}" fill="rgba(177,85,51,0.06)"/>`;
+  svg += `<rect x="${x(1933)}" y="${headerH - 10}" width="${x(1945) - x(1933)}" height="${H - headerH - footerH + 10}" fill="rgba(43,122,142,0.07)"/>`;
 
   // Events with full vertical labels
   for (const ev of eraEvents) {
     const ex = x(ev.year);
     const isKey = ev.key;
-    svg += `<line x1="${ex}" y1="${headerH - 10}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#B15533' : '#b8a98f'}" stroke-width="${isKey ? 1.5 : 0.9}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
+    svg += `<line x1="${ex}" y1="${headerH - 10}" x2="${ex}" y2="${H - footerH}" stroke="${isKey ? '#2B7A8E' : '#b8a98f'}" stroke-width="${isKey ? 1.5 : 0.9}" ${isKey ? 'opacity="0.7"' : 'stroke-dasharray="2,3"'}/>`;
     const labelY = headerH - 14;
-    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="12" fill="${isKey ? '#B15533' : '#2a2520'}" font-weight="${isKey ? '700' : '600'}">${ev.year}</text>`;
+    svg += `<text x="${ex}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex} ${labelY})" font-size="12" fill="${isKey ? '#2B7A8E' : '#2a2520'}" font-weight="${isKey ? '700' : '600'}">${ev.year}</text>`;
     // Event name, smaller, offset further from the line
-    svg += `<text x="${ex - 14}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex - 14} ${labelY})" font-size="11" fill="${isKey ? '#B15533' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${escapeXml(ev.label)}</text>`;
+    svg += `<text x="${ex - 14}" y="${labelY}" text-anchor="start" transform="rotate(-90 ${ex - 14} ${labelY})" font-size="11" fill="${isKey ? '#2B7A8E' : '#6e645a'}" font-weight="${isKey ? '600' : '400'}">${escapeXml(ev.label)}</text>`;
   }
 
   // Year ticks at bottom — every year
@@ -771,8 +797,8 @@ function renderZoomTimeline() {
       const age = ev.year - birth;
       const ex = x(ev.year);
       const isKey = ev.key;
-      svg += `<circle cx="${ex}" cy="${y}" r="13" fill="#fdfaf2" stroke="${isKey ? '#B15533' : '#c47a5e'}" stroke-width="${isKey ? 1.8 : 1.3}"/>`;
-      svg += `<text x="${ex}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#B15533" font-weight="${isKey ? '700' : '600'}">${age}</text>`;
+      svg += `<circle cx="${ex}" cy="${y}" r="13" fill="#fdfaf2" stroke="${isKey ? '#2B7A8E' : '#5fa0b0'}" stroke-width="${isKey ? 1.8 : 1.3}"/>`;
+      svg += `<text x="${ex}" y="${y + 4}" text-anchor="middle" font-size="11" fill="#2B7A8E" font-weight="${isKey ? '700' : '600'}">${age}</text>`;
     }
 
     rowIdx++;
@@ -992,6 +1018,24 @@ function restore() {
   }
 }
 
+// Wipe everything and start over (clears the form AND this device's auto-save).
+function clearAll() {
+  const ok = confirm(
+    'Clear everything and start over?\n\n' +
+    'This erases every person you have entered and the auto-saved copy in this browser. ' +
+    'It cannot be undone.\n\n' +
+    'If you want to keep what you have, click Cancel and use "Save my entries" first.'
+  );
+  if (!ok) return;
+  people = [];
+  nextId = 1;
+  document.getElementById('you-name').value = '';
+  document.getElementById('you-studentnum').value = '';
+  document.getElementById('you-birthyear').value = '';
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  addPerson(); // fresh blank card; re-renders and re-saves the empty state
+}
+
 // ---- Init ----
 
 document.getElementById('add-person').addEventListener('click', () => addPerson());
@@ -1001,6 +1045,7 @@ document.getElementById('you-birthyear').addEventListener('input', () => { rende
 document.getElementById('download-png').addEventListener('click', downloadPNG);
 document.getElementById('print-btn').addEventListener('click', () => window.print());
 document.getElementById('save-data').addEventListener('click', saveData);
+document.getElementById('clear-all').addEventListener('click', clearAll);
 document.getElementById('load-data').addEventListener('change', e => {
   if (e.target.files && e.target.files[0]) loadData(e.target.files[0]);
 });
