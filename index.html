@@ -267,6 +267,9 @@
     display: flex; align-items: center; gap: 0.9rem;
   }
   .masthead .logos .logo-plate img { height: 40px; width: auto; display: block; }
+  .masthead .logos .klb-logo-link { display: inline-flex; align-items: center; }
+  .masthead .logos a { transition: opacity 0.15s; }
+  .masthead .logos a:hover { opacity: 0.82; }
 
   /* Page footer (screen only) */
   .site-footer {
@@ -322,8 +325,8 @@
       <p class="subtitle">Building your family timeline for PSYC 4790.</p>
     </div>
     <div class="logos" id="logos">
-      <span class="logo-plate"><img src="trent-logo.png" alt="Trent University"></span>
-      <img class="klb-logo" src="klb-logo.png" alt="KLB Research (SRAD Lab)">
+      <a class="logo-plate" href="https://www.trentu.ca" target="_blank" rel="noopener noreferrer" aria-label="Trent University (opens in a new tab)"><img src="trent-logo.png" alt="Trent University"></a>
+      <a class="klb-logo-link" href="https://www.drkarenblair.com" target="_blank" rel="noopener noreferrer" aria-label="KLB Research (opens in a new tab)"><img class="klb-logo" src="klb-logo.png" alt="KLB Research (SRAD Lab)"></a>
     </div>
   </div>
 </div>
