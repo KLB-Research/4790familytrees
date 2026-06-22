@@ -397,7 +397,8 @@
   </section>
 
   <footer class="site-footer print-hide">
-    <p><strong>A note on AI.</strong> This tool was built by Dr. Karen L. Blair with the help of an AI assistant (Claude). It's disclosed here in the spirit of the transparent, responsible AI use this course asks of you. The tool itself contains no AI: it sends your information nowhere and runs entirely in your own browser (see the privacy note above). When AI plays a role in your own work, name it the same way.</p>
+    <p><strong>AI diligence statement.</strong> This tool was designed and built by Dr. Karen L. Blair in collaboration with Claude (Anthropic), using Claude Code. The AI assisted with writing the page's code, visual layout, and the logic that draws the timelines; Dr. Blair directed the design, reviewed and tested the output against the assignment's goals, and takes full responsibility for the final tool. The tool itself contains no AI — it runs entirely in your own browser and sends your information nowhere (see the privacy note above).</p>
+    <p>It's disclosed here to model what this course asks of you: when AI contributes to your own work, name the system you used and why, say specifically what it did and what you did to verify it, and affirm that you take responsibility for the result. Include that statement with what you hand in, following the KLB Research / course AI Use Policy.</p>
     <p class="footer-brand">PSYC 4790 · Social Psychology of the Holocaust · Trent University · KLB Research (SRAD Lab)</p>
   </footer>
 </div>
@@ -598,7 +599,7 @@ function renderTimeline() {
   const labelW = 200;
   const rightPad = 30;
   const plotW = W - labelW - rightPad;
-  const headerH = 95;
+  const headerH = 210; // tall enough for the rotated "year · event" labels to clear the top
   const rowH = 65;
   const N = validPeople.length + (youBirth ? 1 : 0);
   const footerH = 40;
