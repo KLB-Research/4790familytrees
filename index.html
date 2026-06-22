@@ -397,7 +397,7 @@
   </section>
 
   <footer class="site-footer print-hide">
-    <p><strong>AI diligence statement.</strong> This tool was designed and built by Dr. Karen L. Blair in collaboration with Claude (Anthropic), using Claude Code. The AI assisted with writing the page's code, visual layout, and the logic that draws the timelines; Dr. Blair directed the design, reviewed and tested the output against the assignment's goals, and takes full responsibility for the final tool. The tool itself contains no AI — it runs entirely in your own browser and sends your information nowhere (see the privacy note above).</p>
+    <p><strong>AI diligence statement.</strong> This assignment was designed by Dr. Karen L. Blair and was previously completed on an Excel spreadsheet; this tool is a web-based adaptation built to make it more user-friendly. Dr. Blair directed that adaptation in collaboration with Claude (Claude Opus 4.8, Anthropic) using Claude Code, which assisted with writing the page's code, visual layout, and the logic that draws the timelines. Dr. Blair reviewed and tested the result against the assignment's goals and takes full responsibility for the final tool. The tool itself contains no AI — it runs entirely in your own browser and sends your information nowhere (see the privacy note above).</p>
     <p>It's disclosed here to model what this course asks of you: when AI contributes to your own work, name the system you used and why, say specifically what it did and what you did to verify it, and affirm that you take responsibility for the result. Include that statement with what you hand in, following the KLB Research / course AI Use Policy.</p>
     <p class="footer-brand">PSYC 4790 · Social Psychology of the Holocaust · Trent University · KLB Research (SRAD Lab)</p>
   </footer>
@@ -412,7 +412,7 @@
 //  date for the winter cohort). Everything below it is the app itself.
 // ============================================================================
 const CONFIG = {
-  assignmentTitle: "Family Lifelines: A Holocaust-Era Family Timeline",
+  assignmentTitle: "Family Timeline Assignment",
   courseCode:      "PSYC 4790",
   courseName:      "Social Psychology of the Holocaust",
   department:      "Department of Psychology",
@@ -560,13 +560,14 @@ function renderTitlePage() {
   const el = document.getElementById('title-page');
   if (!el) return;
   const fullName = document.getElementById('you-name').value.trim() || '[Your full name]';
-  const sNum = document.getElementById('you-studentnum').value.trim();
+  const sNum = document.getElementById('you-studentnum').value.trim() || '[Student number]';
   const lines = [
     fullName,
-    sNum ? `Student Number: ${sNum}` : '',
-    `${CONFIG.department}, ${CONFIG.institution}`,
+    `Student Number: ${sNum}`,
+    CONFIG.department,
+    CONFIG.institution,
     `${CONFIG.courseCode}: ${CONFIG.courseName}`,
-    CONFIG.instructor,
+    `Professor: ${CONFIG.instructor}`,
     CONFIG.dueDate
   ].filter(Boolean);
   el.innerHTML =
