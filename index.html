@@ -262,6 +262,10 @@
   .twin-panel { border-left: 3px solid #8a3a4a; padding-left: 1.25rem; }
   .twin-panel h3 { color: #8a3a4a; }
   .twin-age { margin: 0.6rem 0 0; font-style: italic; color: var(--muted); }
+  /* Twin in the "Who was alive when?" list — same maroon as its timeline row */
+  .checkpoint li.twin-entry,
+  .checkpoint li.twin-entry .person-name,
+  .checkpoint li.twin-entry .age-loc { color: #8a3a4a; }
 
   /* Clear / start-over button — quiet, with a cautionary hover */
   .actions button.btn-clear { background: none; color: var(--muted); border: 1px solid var(--line); }
@@ -535,6 +539,24 @@ function escapeXml(s) {
   return String(s).replace(/[<>&'"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;',"'":'&apos;','"':'&quot;'}[c]));
 }
 
+// Measure rendered text width so the left-hand label gutter can grow to fit the
+// longest name/relationship — names never get clipped, however long they are.
+const _measureCtx = document.createElement('canvas').getContext('2d');
+function measureLabel(text, weight, size, italic) {
+  _measureCtx.font = `${italic ? 'italic ' : ''}${weight} ${size}px Inter, system-ui, sans-serif`;
+  return _measureCtx.measureText(text || '').width;
+}
+// Given the rows that will be drawn, return a label-gutter width wide enough for
+// every name (13px/600) and relationship (11px/italic), clamped to a sane range.
+function labelGutter(labelRows, minW) {
+  let maxW = 0;
+  for (const r of labelRows) {
+    maxW = Math.max(maxW, measureLabel(r.name, 600, 13, false));
+    if (r.relationship) maxW = Math.max(maxW, measureLabel(r.relationship, 400, 11, true));
+  }
+  return Math.min(420, Math.max(minW, Math.ceil(maxW) + 24)); // +24 = 12px gap + breathing room
+}
+
 function addPerson(initial) {
   const id = nextId++;
   const p = {
@@ -683,7 +705,9 @@ function renderTimeline() {
   const maxYear = Math.max(2026, youBirth || 2005) + 4;
 
   const W = 1200;
-  const labelW = 200;
+  const labelRows = rows.map(r => ({ name: r.name || 'Person', relationship: r.relationship }));
+  if (youBirth) labelRows.push({ name: youName, relationship: 'you' });
+  const labelW = labelGutter(labelRows, 200);
   const rightPad = 30;
   const plotW = W - labelW - rightPad;
   const headerH = 210; // tall enough for the rotated "year · event" labels to clear the top
@@ -809,7 +833,7 @@ function renderZoomTimeline() {
   const eraEvents = EVENTS.filter(ev => ev.year >= minYear && ev.year <= maxYear);
 
   const W = 1200;
-  const labelW = 200;
+  const labelW = labelGutter(rows.map(r => ({ name: r.name || 'Person', relationship: r.relationship })), 200);
   const rightPad = 30;
   const plotW = W - labelW - rightPad;
   const headerH = 240; // taller for full event names
@@ -935,8 +959,10 @@ function renderWartimePanel() {
 function renderByEventPanel() {
   const target = document.getElementById('by-event-section');
   const validPeople = people.filter(p => p.birthYear && !isNaN(parseInt(p.birthYear)));
+  const twinRow = twinAsRow();
+  const everyone = twinRow ? [...validPeople, twinRow] : [...validPeople];
 
-  if (validPeople.length === 0) {
+  if (everyone.length === 0) {
     target.innerHTML = '';
     return;
   }
@@ -944,7 +970,7 @@ function renderByEventPanel() {
   let html = '<div class="reference-panel"><h3>Who was alive when?</h3>';
 
   for (const ev of EVENTS) {
-    const peopleAlive = validPeople
+    const peopleAlive = everyone
       .filter(p => {
         const birth = parseInt(p.birthYear);
         const death = p.deathYear ? parseInt(p.deathYear) : 2100;
@@ -962,7 +988,8 @@ function renderByEventPanel() {
       const age = ev.year - parseInt(p.birthYear);
       const name = p.name || 'Unnamed person';
       const rel = p.relationship ? ` (${p.relationship})` : '';
-      html += `<li><span class="person-name">${escapeXml(name)}${escapeXml(rel)}</span><span class="age-loc">: age ${age}</span></li>`;
+      const cls = p._twin ? ' class="twin-entry"' : '';
+      html += `<li${cls}><span class="person-name">${escapeXml(name)}${escapeXml(rel)}</span><span class="age-loc">: age ${age}</span></li>`;
     }
     html += `</ul></div>`;
   }
