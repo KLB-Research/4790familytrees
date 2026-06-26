@@ -546,15 +546,45 @@ function measureLabel(text, weight, size, italic) {
   _measureCtx.font = `${italic ? 'italic ' : ''}${weight} ${size}px Inter, system-ui, sans-serif`;
   return _measureCtx.measureText(text || '').width;
 }
-// Given the rows that will be drawn, return a label-gutter width wide enough for
-// every name (13px/600) and relationship (11px/italic), clamped to a sane range.
-function labelGutter(labelRows, minW) {
-  let maxW = 0;
-  for (const r of labelRows) {
-    maxW = Math.max(maxW, measureLabel(r.name, 600, 13, false));
-    if (r.relationship) maxW = Math.max(maxW, measureLabel(r.relationship, 400, 11, true));
+// Greedy word-wrap so a long name/relationship spans multiple lines rather than
+// forcing a wide gutter that would squeeze the timeline.
+function wrapText(text, weight, size, italic, maxWidth) {
+  text = String(text || '').trim();
+  if (!text) return [];
+  const words = text.split(/\s+/);
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    const trial = cur ? cur + ' ' + w : w;
+    if (!cur || measureLabel(trial, weight, size, italic) <= maxWidth) cur = trial;
+    else { lines.push(cur); cur = w; }
   }
-  return Math.min(420, Math.max(minW, Math.ceil(maxW) + 24)); // +24 = 12px gap + breathing room
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+const NAME_SIZE = 13, NAME_LH = 15, REL_SIZE = 11, REL_LH = 14;
+
+// Wrap a row's name + relationship to the gutter width; report total block height.
+function wrapLabel(name, relationship, usable) {
+  const nameLines = wrapText(name, 600, NAME_SIZE, false, usable);
+  const relLines = relationship ? wrapText(relationship, 400, REL_SIZE, true, usable) : [];
+  return { nameLines, relLines, height: nameLines.length * NAME_LH + relLines.length * REL_LH };
+}
+
+// Emit a wrapped label, right-anchored at xRight and vertically centred on yCenter.
+function labelSvg(lbl, xRight, yCenter, c) {
+  let s = '';
+  let by = yCenter - lbl.height / 2 + NAME_SIZE * 0.85;
+  for (const line of lbl.nameLines) {
+    s += `<text x="${xRight}" y="${by}" text-anchor="end" font-size="${NAME_SIZE}" fill="${c.name}" font-weight="600">${escapeXml(line)}</text>`;
+    by += NAME_LH;
+  }
+  for (const line of lbl.relLines) {
+    s += `<text x="${xRight}" y="${by}" text-anchor="end" font-size="${REL_SIZE}" fill="${c.rel}" font-style="italic">${escapeXml(line)}</text>`;
+    by += REL_LH;
+  }
+  return s;
 }
 
 function addPerson(initial) {
@@ -705,13 +735,15 @@ function renderTimeline() {
   const maxYear = Math.max(2026, youBirth || 2005) + 4;
 
   const W = 1200;
-  const labelRows = rows.map(r => ({ name: r.name || 'Person', relationship: r.relationship }));
-  if (youBirth) labelRows.push({ name: youName, relationship: 'you' });
-  const labelW = labelGutter(labelRows, 200);
+  const labelW = 210;
   const rightPad = 30;
   const plotW = W - labelW - rightPad;
+  const usable = labelW - 16; // gutter minus the 12px gap and a little margin
   const headerH = 210; // tall enough for the rotated "year · event" labels to clear the top
-  const rowH = 65;
+  const drawnRows = rows.map((r, i) => ({ ...r, _lbl: wrapLabel(r.name || `Person ${i + 1}`, r.relationship, usable) }));
+  const youLbl = youBirth ? wrapLabel(youName, 'you', usable) : null;
+  const maxLabelH = Math.max(0, ...drawnRows.map(d => d._lbl.height), youLbl ? youLbl.height : 0);
+  const rowH = Math.max(65, maxLabelH + 22); // grow rows to fit wrapped labels
   const N = rows.length + (youBirth ? 1 : 0);
   const footerH = 40;
   const H = headerH + N * rowH + footerH;
@@ -745,7 +777,7 @@ function renderTimeline() {
 
   // Person rows (family, then the twin)
   let rowIdx = 0;
-  for (const p of rows) {
+  for (const p of drawnRows) {
     const c = p._twin ? ROW_COLORS_TWIN : ROW_COLORS_FAMILY;
     const y = headerH + rowIdx * rowH + rowH * 0.5;
     const birth = parseInt(p.birthYear);
@@ -757,11 +789,7 @@ function renderTimeline() {
       svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#ede5d3" stroke-width="0.5"/>`;
     }
 
-    const name = p.name || `Person ${rowIdx + 1}`;
-    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="${c.name}" font-weight="600">${escapeXml(name)}</text>`;
-    if (p.relationship) {
-      svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="${c.rel}" font-style="italic">${escapeXml(p.relationship)}</text>`;
-    }
+    svg += labelSvg(p._lbl, labelW - 12, y, c);
 
     svg += `<line x1="${x(birth)}" y1="${y}" x2="${x(death)}" y2="${y}" stroke="${c.line}" stroke-width="3.5" stroke-linecap="round"/>`;
 
@@ -793,8 +821,7 @@ function renderTimeline() {
     const y = headerH + rowIdx * rowH + rowH * 0.5;
     const sepY = headerH + rowIdx * rowH;
     svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#00512F" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.4"/>`;
-    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="#00512F" font-weight="600">${escapeXml(youName)}</text>`;
-    svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="#00512F" font-style="italic">you</text>`;
+    svg += labelSvg(youLbl, labelW - 12, y, { name: '#00512F', rel: '#00512F' });
     svg += `<line x1="${x(youBirth)}" y1="${y}" x2="${x(maxYear - 4)}" y2="${y}" stroke="#00512F" stroke-width="3.5" stroke-linecap="round"/>`;
     svg += `<circle cx="${x(youBirth)}" cy="${y}" r="4.5" fill="#00512F"/>`;
     svg += `<text x="${x(youBirth)}" y="${y - 11}" text-anchor="middle" font-size="10" fill="#00512F">${youBirth}</text>`;
@@ -833,11 +860,14 @@ function renderZoomTimeline() {
   const eraEvents = EVENTS.filter(ev => ev.year >= minYear && ev.year <= maxYear);
 
   const W = 1200;
-  const labelW = labelGutter(rows.map(r => ({ name: r.name || 'Person', relationship: r.relationship })), 200);
+  const labelW = 210;
   const rightPad = 30;
   const plotW = W - labelW - rightPad;
+  const usable = labelW - 16;
   const headerH = 240; // taller for full event names
-  const rowH = 75;
+  const drawnRows = rows.map((r, i) => ({ ...r, _lbl: wrapLabel(r.name || `Person ${i + 1}`, r.relationship, usable) }));
+  const maxLabelH = Math.max(0, ...drawnRows.map(d => d._lbl.height));
+  const rowH = Math.max(75, maxLabelH + 22);
   const N = rows.length;
   const footerH = 45;
   const H = headerH + N * rowH + footerH;
@@ -875,7 +905,7 @@ function renderZoomTimeline() {
 
   // Person rows (family, then the twin)
   let rowIdx = 0;
-  for (const p of rows) {
+  for (const p of drawnRows) {
     const c = p._twin ? ROW_COLORS_TWIN : ROW_COLORS_FAMILY;
     const y = headerH + rowIdx * rowH + rowH * 0.5;
     const birth = parseInt(p.birthYear);
@@ -888,11 +918,7 @@ function renderZoomTimeline() {
       svg += `<line x1="${labelW - 5}" y1="${sepY}" x2="${labelW + plotW}" y2="${sepY}" stroke="#ede5d3" stroke-width="0.5"/>`;
     }
 
-    const name = p.name || `Person ${rowIdx + 1}`;
-    svg += `<text x="${labelW - 12}" y="${y - 1}" text-anchor="end" font-size="13" fill="${c.name}" font-weight="600">${escapeXml(name)}</text>`;
-    if (p.relationship) {
-      svg += `<text x="${labelW - 12}" y="${y + 14}" text-anchor="end" font-size="11" fill="${c.rel}" font-style="italic">${escapeXml(p.relationship)}</text>`;
-    }
+    svg += labelSvg(p._lbl, labelW - 12, y, c);
 
     svg += `<line x1="${x(lineStart)}" y1="${y}" x2="${x(lineEnd)}" y2="${y}" stroke="${c.line}" stroke-width="3.5" stroke-linecap="round"/>`;
 
